@@ -143,10 +143,10 @@ Strain	Debaryomyces hansenii CBS 767	Debha_CBS_767	dha	1
 Strain	Zygosaccharomyces rouxii CBS 732	Zygro_CBS_732	zro	1
 Strain	Pachysolen tannophilus NRRL Y-2460	Pacta_NRRL_Y2460	pta	1
 Strain	Rhodotorula graminis WP1	Rhogr_WP1	rgm	1
-Level 1	Saccharomycodaceae-Saccharomycetaceae superclade	SS_clade	hva|kla|lth|zro|sce|vpo	6
-Level 2	PSS superclade	PSS_clade	wan|cut|hva|kla|lth|zro|sce|vpo	8
-Level 2	Pichiaceae superclade	Pichia_clade	pta|ppa|kcp|car|opm|dbx|pme|pku	8
-Level 2	CTG superclade	CTG	bin|cpr|mbi|mgu|dha|pic|spa	7
-Level 3	ACPPSS superclade	ACPPSS_clade	aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	24
-Level 4	Oleaginous yeast	YeastOleag	lst|yli	2
-Level 4	Fermentering yeast	YeastFerm	arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	26
+Level1	Saccharomycodaceae-Saccharomycetaceae superclade	SS_clade	hva|kla|lth|zro|sce|vpo	6
+Level2	PSS superclade	PSS_clade	wan|cut|hva|kla|lth|zro|sce|vpo	8
+Level2	Pichiaceae superclade	Pichia_clade	pta|ppa|kcp|car|opm|dbx|pme|pku	8
+Level2	CTG superclade	CTG	bin|cpr|mbi|mgu|dha|pic|spa	7
+Level3	ACPPSS superclade	ACPPSS_clade	aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	24
+Level4	Oleaginous yeast	YeastOleag	lst|yli	2
+Level4	Fermentering yeast	YeastFerm	arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	26

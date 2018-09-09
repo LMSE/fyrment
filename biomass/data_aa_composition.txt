@@ -1,0 +1,21 @@
+amino acid	Symbol	name	charged	uncharged	chebi	mass	mol N	charge	iMM904 mmol AA/gDCW
+ala__L	A	L-alanine zwitterion	alatrna	trnaala	57972	89.0932	1	0	0.4588
+arg__L	R	L-argininium(1+)	argtrna	trnaarg	32682	175.20906	4	1	0.1607
+asn__L	N	L-asparagine zwitterion	asntrna	trnaasn	58048	132.1179	2	0	0.1017
+asp__L	D	L-aspartate(1Ã¢Ë†â€™)	asptrna	trnaasp	29991	132.09478	1	-1	0.2975
+cys__L	C	L-cysteine zwitterion	cystrna	trnacys	35235	121.15922	1	0	0.0066
+gln__L	Q	L-glutamine zwitterion	glntrna	trnagln	58359	146.1445	2	0	0.1054
+glu__L	E	L-glutamate(1Ã¢Ë†â€™)	glutrna	trnaglu	29985	146.12136	1	-1	0.3018
+gly	G	glycine zwitterion	glytrna	trnagly	57305	75.0666	1	0	0.2904
+his__L	H	L-histidine zwitterion	histrna	trnahis	57595	155.1546	3	0	0.0663
+ile__L	I	L-isoleucine zwitterion	iletrna	trnaile	58045	131.1729	1	0	0.1927
+leu__L	L	L-leucine zwitterion	leutrna	trnaleu	57427	131.1729	1	0	0.2964
+lys__L	K	L-lysinium(1+)	lystrna	trnalys	32551	147.19558	2	1	0.2862
+met__L	M	L-methionine zwitterion	mettrna	trnamet	57844	149.211	1	0	0.0507
+phe__L	F	L-phenylalanine zwitterion	phetrna	trnaphe	58095	165.1891	1	0	0.1339
+pro__L	P	L-proline zwitterion	protrna	trnapro	60039	115.1305	1	0	0.1647
+ser__L	S	L-serine zwitterion	sertrna	trnaser	33384	105.09262	1	0	0.1854
+thr__L	T	L-threonine zwitterion	thrtrna	trnathr	57926	119.1192	1	0	0.1914
+trp__L	W	L-tryptophan zwitterion	trptrna	trnatrp	57912	204.2252	2	0	0.0284
+tyr__L	Y	L-tyrosine zwitterion	tyrtrna	trnatyr	58315	181.1885	1	0	0.102
+val__L	V	L-valine zwitterion	valtrna	trnaval	57762	117.1463	1	0	0.2646
