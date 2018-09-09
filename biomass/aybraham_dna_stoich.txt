@@ -1,4 +1,4 @@
-	datp	dttp	dctp	dgtp	h	h2o	ppi	dna_1g
+oid	datp	dttp	dctp	dgtp	h	h2o	ppi	dna_1g
 rgm	-0.513	-0.513	-1.076	-1.076	-3.178	-1.0	3.178	1.0
 sai	-0.753	-0.753	-0.836	-0.836	-3.178	-1.0	3.178	1.0
 spo	-1.017	-1.017	-0.572	-0.572	-3.179	-1.0	3.179	1.0

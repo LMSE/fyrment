@@ -8,7 +8,7 @@ import os
 
 
 def write_xml_to_xlsx(level_order,level,readable):
-	path_xml = './xml/'+str(level_order).zfill(2)+'_'+level.lower()+'/i'+readable+'.xml'
+	path_xml = './genre/xml/'+str(level_order).zfill(2)+'_'+level.lower()+'/i'+readable+'.xml'
 	tree = ET.parse(path_xml)
 	root = tree.getroot()
 	#
@@ -162,10 +162,10 @@ def write_xml_to_xlsx(level_order,level,readable):
 		smiles=''
 		details=[met_id,met_description,'',formula,charge,compartment,kegg,pubchem_compound,chebi,inchi,smiles]
 		model_mets.loc[len(model_mets)]=details
-	path_xlsx_dir = './xlsx/'+str(level_order).zfill(2)+'_'+level.lower()+'/'
+	path_xlsx_dir = './genre/xlsx/'+str(level_order).zfill(2)+'_'+level.lower()+'/'
 	if not os.path.exists(path_xlsx_dir):
 		os.makedirs(path_xlsx_dir)
-	path_xlsx_file = './xlsx/'+str(level_order).zfill(2)+'_'+level.lower()+'/i'+readable+'.xlsx'
+	path_xlsx_file = './genre/xlsx/'+str(level_order).zfill(2)+'_'+level.lower()+'/i'+readable+'.xlsx'
 	writer = ExcelWriter(path_xlsx_file)
 	model_rxns.to_excel(writer,'reactions',index=False)
 	model_mets.to_excel(writer,'metabolites',index=False)
@@ -173,22 +173,27 @@ def write_xml_to_xlsx(level_order,level,readable):
 
 
 
-taxonomy=pd.read_csv('taxonomy_level_oids.txt',sep='\t')
-taxon_order=zip(*sorted([(taxonomy.level.tolist().index(taxon),taxon) for taxon in set(taxonomy.level.tolist())]))[1]
-version_aybraham='0.0.7'
 
+url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
+
+taxonomy=pd.read_excel(url_aybrah_xlsx,sheet_name='taxon_nodes')
+#taxonomy.drop(46)
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)
 
-for index,row in taxonomy.iterrows():
+
+taxon_order=zip(*sorted([(taxonomy.level.tolist().index(taxon),taxon) for taxon in set(taxonomy.level.tolist())]))[1]
+
+
+for index,row in taxonomy[113:].iterrows():
 #for index,row in taxonomy[taxonomy.level=='Strain'].iterrows():
 #for index in [111]:
 	level=taxonomy['level'][index]
 	level_order=taxon_order.index(level)
 	name=taxonomy['name'][index]
 	print name
-	path = './xlsx/'+str(level_order).zfill(2)+'_'+level.lower()
-	readable=taxonomy['readable'][index]
+	path = './genre/xlsx/'+str(level_order).zfill(2)+'_'+level.lower()
+	readable=taxonomy['readable'][index].replace('.','_')
 	write_xml_to_xlsx(level_order,level,readable)
 
 """

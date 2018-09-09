@@ -120,7 +120,7 @@ for df in [df_simple,df_trna]:
 xtp=pd.read_csv('data_xtp_composition.txt',sep='\t').fillna('').set_index('metid_reactant')
 
 
-data_sources=xtp.columns[xtp.columns.tolist().index('PIC RNA'):].tolist()
+#data_sources=xtp.columns[xtp.columns.tolist().index('PIC RNA'):].tolist()
 
 
 def XTP_formulas_from_table(macromolecule,source):
@@ -202,7 +202,7 @@ df_genomes=pd.read_excel(url_aybrah_xlsx,sheet_name='organisms').fillna('').set_
 
 
 
-df_dna_reaction=pd.DataFrame(columns='datp|dttp|dctp|dgtp|h|h2o|ppi|dna_1g'.split('|'))
+df_dna_reaction=pd.DataFrame(columns='oid|datp|dttp|dctp|dgtp|h|h2o|ppi|dna_1g'.split('|')).set_index('oid')
 
 # how was GC content extracted? assembly accessions via UniProt but unsure where code is
 for order,row in df_genomes.iterrows():
