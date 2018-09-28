@@ -185,7 +185,7 @@ taxonomy=taxonomy.drop(drop_these)
 taxon_order=zip(*sorted([(taxonomy.level.tolist().index(taxon),taxon) for taxon in set(taxonomy.level.tolist())]))[1]
 
 
-for index,row in taxonomy[113:].iterrows():
+for index,row in taxonomy.iterrows():
 #for index,row in taxonomy[taxonomy.level=='Strain'].iterrows():
 #for index in [111]:
 	level=taxonomy['level'][index]

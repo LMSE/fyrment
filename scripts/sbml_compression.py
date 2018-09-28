@@ -12,7 +12,9 @@ As the total storage of all the GENRE's is approaching 1 GB
 """
 
 
-taxonomy=pd.read_csv('taxonomy_level_oids.txt',sep='\t')
+url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
+
+taxonomy=pd.read_excel(url_aybrah_xlsx,sheet_name='taxon_nodes')
 #taxonomy.drop(46)
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)
@@ -30,7 +32,7 @@ for index,row in taxonomy.iterrows():
 	print readable
 	for extension in ['xml','xlsx']:
 		print '\t'+extension
-		path_genre_dir = '/Users/kcorreia/Dropbox/PhD/04_manuscripts/MOPUS03_AYbRAHAM/'+extension+'/'+str(level_order).zfill(2)+'_'+level.lower()
+		path_genre_dir = './genre/'+extension+'/'+str(level_order).zfill(2)+'_'+level.lower()
 		path_genre_file=path_genre_dir+'/i'+readable+'.'+extension
 		path_genre_gzip_dir='./genre/'+extension+'/'+path_genre_file.split('/')[-2]
 		if not os.path.exists(path_genre_gzip_dir):
@@ -40,4 +42,5 @@ for index,row in taxonomy.iterrows():
 		f_out.writelines(f_in)
 		f_out.close()
 		f_in.close()
+		os.remove(path_genre_file)
 

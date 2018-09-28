@@ -295,7 +295,6 @@ def create_parameters():
 		parameter.setConstant(True)
 
 
-
 def create_reactions():
 	for rxnid, row in rxns.iterrows():
 		print rxnid
@@ -721,11 +720,9 @@ oid_rxns=get_rxn_inclusion()
 
 
 
-
-
-
-#for index,row in taxonomy.iterrows():
-for index in range(144,151):
+#for index,row in taxonomy[taxonomy['level']=='Strain'].iterrows():
+for index,row in taxonomy.iterrows():
+#for index in range(144,151):
 #for index in [111]:# pic
 #for index in [110]:# sce
 	level=taxonomy['level'][index]
@@ -767,9 +764,9 @@ for index in range(144,151):
 	mplugin.setStrict(True)
 	# Set model name
 	#
-	model.setId(model_id)
-	model.setMetaId(model_metaid)
-	model.setName(model_name)
+	model.setId(str(model_id))
+	model.setMetaId(str(model_metaid))
+	model.setName(str(model_name))
 	# include AYbRAH, AYbRAHAM versions
 	notes=['<p>'+db+' DB version: '+str(v)+'</p>' for db,v in zip(['AYbRAH','AYbRAHAM'],[version_aybrah,version_aybraham])]
 	note = '<body xmlns="http://www.w3.org/1999/xhtml">'+''.join(notes)+'</body>'
@@ -812,7 +809,7 @@ for index in range(144,151):
 	path_xml_file=path_xml_dir+'/i'+readable+'.xml'
 	if not os.path.exists(path_xml_dir):
 		os.makedirs(path_xml_dir)
-	writeSBML(document,path_xml_file)
+	writeSBML(document,str(path_xml_file))
 	###################################
 
 
@@ -842,7 +839,7 @@ for index,row in taxonomy.iterrows():
 	#
 	reader = SBMLReader()
 	#
-	document = reader.readSBML(path_xml_file)
+	document = reader.readSBML(str(path_xml_file))
 	model = document.getModel()
 	rxnids_all=[reaction.id for reaction in model.getListOfReactions()]
 	#
@@ -890,7 +887,7 @@ for index,row in taxonomy.iterrows():
 		# "cytosolic origin of alanine biosynthesis in S. kluyveri"
 		# https://academic.oup.com/femsyr/article/5/6-7/545/528244
 		# need inositol pathways shut off for inositol auxotrophic strains
-	writeSBML(document,path_xml_file)
+	writeSBML(document,str(path_xml_file))
 
 
 
