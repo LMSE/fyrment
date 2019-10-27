@@ -1,0 +1,152 @@
+level	name	readable	oids	count	uniprot:proteome	genes	reactions	metabolites
+Domain	Eukaryota	Eukaryota	rgm|sai|spo|ncr|tre|ang|ani|lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	35		1553	2759	2251
+Kingdom	Fungi	Fungi	rgm|sai|spo|ncr|tre|ang|ani|lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	35		1553	2759	2261
+Subkingdom	Dikarya	Dikarya	rgm|sai|spo|ncr|tre|ang|ani|lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	35		1553	2723	2230
+Division	Basidiomycota	Basidiomycota	rgm	1		961	2381	2038
+Division	Ascomycota	Ascomycota	sai|spo|ncr|tre|ang|ani|lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	34		1552	2720	2230
+Subdivision	Saccharomycotina	Budding	lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	28		1487	2674	2203
+Subdivision	Pucciniomycotina	Puccinio	rgm	1		961	2381	2038
+Subdivision	Taphrinomycotina	Taphrino	sai|spo	2		1134	2443	2069
+Subdivision	Pezizomycotina	Pezizo	ncr|tre|ang|ani	4		1228	2506	2129
+Class	Microbotryomycetes	Microbotry	rgm	1		961	2381	2038
+Class	Saccharomycetes	Saccharomycetes	lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	28		1487	2674	2203
+Class	Taphrinomycotina incertae sedis	Taphrinomycotina_incertae	sai	1		1051	2387	2047
+Class	Schizosaccharomycetes	Schizosaccharomycetes	spo	1		916	2021	1789
+Class	Sordariomycetes	Sordariomycetes	ncr|tre	2		1193	2471	2115
+Class	Eurotiomycetes	Eurotiomycetes	ang|ani	2		1160	2462	2095
+Subclass	Eurotiomycetidae	Eurotiomycetidae	ang|ani	2		1160	2462	2095
+Subclass	Sordariomycetidae	Sordariomycetidae	ncr	1		1144	2422	2077
+Subclass	Hypocreomycetidae	Hypocreomycetidae	tre	1		1140	2418	2084
+Order	Sporidiobolales	Sporidiobolales	rgm	1		961	2381	2038
+Order	Sordariales	Sordariales	ncr	1		1144	2422	2077
+Order	Hypocreales	Hypocreales	tre	1		1140	2418	2084
+Order	Schizosaccharomycetales	Schizosaccharomycetales	spo	1		916	2021	1789
+Order	Saccharomycetales	Saccharomycetales	lst|yli|arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	28		1487	2674	2203
+Order	Eurotiales	Eurotiales	ang|ani	2		1160	2462	2095
+Family	Saccharomycetaceae	Saccharomycetaceae	kla|lth|zro|sce|vpo	5		1273	2450	2075
+Family	Phaffomycetaceae	Phaffomycetaceae	wan|cut	2		1183	2461	2078
+Family	Sordariaceae	Sordariaceae	ncr	1		1144	2422	2077
+Family	Pichiaceae	Pichiaceae	pta|ppa|kcp|car|opm|dbx|pme|pku	8		1239	2486	2091
+Family	Sporidiobolaceae	Sporidiobolaceae	rgm	1		961	2381	2038
+Family	Aspergillaceae	Aspergillaceae	ang|ani	2		1160	2462	2095
+Family	Saccharomycetales incertae sedis	Saccharomycetales_incertae	nfu	1		1037	2326	2031
+Family	Lipomycetaceae	Lipomycetaceae	lst	1		1053	2368	2049
+Family	Debaryomycetaceae	Debaryomycetaceae	bin|cpr|mgu|dha|pic|spa	6		1241	2536	2120
+Family	Schizosaccharomycetaceae	Schizosaccharomycetaceae	spo	1		916	2021	1789
+Family	Metschnikowiaceae	Metschnikowiaceae	mbi	1		1118	2350	2020
+Family	Trichomonascaceae	Trichomonascaceae	arx	1		1115	2421	2062
+Family	Hypocreaceae	Hypocreaceae	tre	1		1140	2418	2084
+Family	Saccharomycodaceae	Saccharomycodaceae	hva	1		855	2061	1816
+Family	Ascoideaceae	Ascoideaceae	aru	1		1060	2337	2023
+Family	Dipodascaceae	Dipodascaceae	yli	1		1128	2376	2031
+Genus	Yarrowia	Yarrowia	yli	1		1128	2376	2031
+Genus	Pachysolen	Pachysolen	pta	1		1135	2402	2032
+Genus	Zygosaccharomyces	Zygosaccharomyces	zro	1		1099	2363	2034
+Genus	Debaryomyces	Debaryomyces	dha	1		1183	2424	2066
+Genus	Kuraishia	Kuraishia	kcp	1		1142	2408	2051
+Genus	Wickerhamomyces	Wickerhamomyces	wan	1		1170	2450	2078
+Genus	Schizosaccharomyces	Schizosaccharomyces	spo	1		916	2021	1789
+Genus	Candida/Lodderomyces	Candida	cpr	1				
+Genus	Rhodotorula	Rhodotorula	rgm	1		961	2381	2038
+Genus	Lipomyces	Lipomyces	lst	1		1053	2368	2049
+Genus	Vanderwaltozyma	Vanderwaltozyma	vpo	1		1035	2278	1964
+Genus	Spathaspora	Spathaspora	spa	1		1145	2402	2041
+Genus	Aspergillus	Aspergillus	ang|ani	2		1160	2462	2095
+Genus	Kluyveromyces	Kluyveromyces	kla	1		1113	2371	2028
+Genus	Saccharomyces	Saccharomyces	sce	1		1207	2392	2042
+Genus	Ogataea	Ogataea	car|opm	2		1161	2425	2060
+Genus	Dekkera	Dekkera	dbx	1		1071	2315	1995
+Genus	Nadsonia	Nadsonia	nfu	1		1037	2326	2031
+Genus	Babjeviella	Babjeviella	bin	1		1125	2412	2055
+Genus	Ascoidea	Ascoidea	aru	1		1060	2337	2023
+Genus	Cyberlindnera	Cyberlindnera	cut	1		1140	2427	2050
+Genus	Blastobotrys	Blastobotrys	arx	1		1115	2421	2062
+Genus	Hanseniaspora	Hanseniaspora	hva	1		855	2061	1816
+Genus	Trichoderma	Trichoderma	tre	1		1140	2418	2084
+Genus	Lachancea	Lachancea	lth	1		1119	2378	2048
+Genus	Pichia	Pichia	pme|pku	2		1094	2325	2004
+Genus	Metschnikowia	Metschnikowia	mbi	1		1118	2350	2020
+Genus	Neurospora	Neurospora	ncr	1		1144	2422	2077
+Genus	Saitoella	Saitoella	sai	1		1051	2387	2047
+Genus	Meyerozyma	Meyerozyma	mgu	1		1141	2404	2051
+Genus	Komagataella	Komagataella	ppa	1		1103	2337	2001
+Genus	Scheffersomyces	Scheffersomyces	pic	1		1183	2488	2075
+Species	Scheffersomyces stipitis	Picst	pic	1		1183	2488	2075
+Species	Hanseniaspora valbyensis	Hanva	hva	1		855	2061	1816
+Species	Ogataea parapolymorpha	Ogapa	opm	1		1133	2378	2025
+Species	Brettanomyces bruxellensis	Dekbr	dbx	1		1071	2315	1995
+Species	Blastobotrys adeninivorans	Blaad	arx	1		1115	2421	2062
+Species	Lipomyces starkeyi	Lipst	lst	1		1053	2368	2049
+Species	Pichia membranifaciens	Picme	pme	1		1070	2312	1996
+Species	Pichia kudriavzevii	Picku	pku	1		1035	2280	1985
+Species	Lachancea thermotolerans	Lacth	lth	1		1119	2378	2048
+Species	Debaryomyces hansenii	Debha	dha	1		1183	2424	2066
+Species	Neurospora crassa	Neucr	ncr	1		1144	2422	2077
+Species	Emericella nidulans	Emeni	ani	1				
+Species	Ogataea arabinofermentans	Ogaar	car	1		1098	2376	2037
+Species	Metschnikowia bicuspidata	Metbi	mbi	1		1118	2350	2020
+Species	Meyerozyma guilliermondii	Meygu	mgu	1		1141	2404	2051
+Species	Wickerhamomyces anomalus	Wican	wan	1		1170	2450	2078
+Species	Saitoella complicata	Saico	sai	1		1051	2387	2047
+Species	Kuraishia capsulata	Kurca	kcp	1		1142	2408	2051
+Species	Yarrowia lipolytica	Yarli	yli	1		1128	2376	2031
+Species	Cyberlindnera jadinii	Cybja	cut	1		1140	2427	2050
+Species	Hypocrea jecorina	Hypje	tre	1		1140	2418	2084
+Species	Aspergillus niger	Aspni	ang	1		1160	2462	2095
+Species	Komagataella phaffii	Komph	ppa	1		1103	2337	2001
+Species	Pachysolen tannophilus	Pacta	pta	1		1135	2402	2032
+Species	Candida parapsilosis	Canpa	cpr	1				
+Species	Saccharomyces cerevisiae	Sacce	sce	1		1207	2392	2042
+Species	Schizosaccharomyces pombe	Schpo	spo	1		916	2021	1789
+Species	Spathaspora passalidarum	Spapa	spa	1		1145	2402	2041
+Species	Rhodotorula graminis	Rhogr	rgm	1		961	2381	2038
+Species	Ascoidea rubescens	Ascru	aru	1		1060	2337	2023
+Species	Kluyveromyces lactis	Klula	kla	1		1113	2371	2028
+Species	Zygosaccharomyces rouxii	Zygro	zro	1		1099	2363	2034
+Species	Babjeviella inositovora	Babin	bin	1		1125	2412	2055
+Species	Nadsonia fulvescens	Nadfu	nfu	1		1037	2326	2031
+Species	Vanderwaltozyma polyspora	Vanpo	vpo	1		1035	2278	1964
+Varietas	Metschnikowia bicuspidata var. bicuspidata	Metbi_v_bi	mbi	1		1118	2350	2020
+Varietas	Nadsonia fulvescens var. elongata	Nadfu_v_el	nfu	1		1037	2326	2031
+Strain	Pichia kudriavzevii SD108	Picku_SD108	pku	1		1261	2280	1985
+Strain	Saccharomyces cerevisiae S288c	Sacce_S288c	sce	1	UP000002311	1346	2392	2042
+Strain	Scheffersomyces stipitis CBS 6054	Picst_CBS_6054	pic	1	UP000002258	1315	2488	2075
+Strain	Lipomyces starkeyi NRRL Y-11557	Lipst_NRRL_Y11557	lst	1	UP000094385	1259	2368	2049
+Strain	Kluyveromyces lactis NRRL Y-1140	Klula_NRRL_Y1140	kla	1	UP000000598	1157	2371	2028
+Strain	Ogataea arabinofermentans NRRL YB-2248	Ogaar_NRRL_YB2248	car	1	UP000094801	1163	2376	2037
+Strain	Blastobotrys adeninivorans LR3	Blaad_LR3	arx	1		1212	2421	2062
+Strain	Aspergillus niger CBS 513.88	Aspni_CBS_513_88	ang	1	UP000006706	1412	2462	2095
+Strain	Neurospora crassa OR74A	Neucr_OR74A	ncr	1	UP000001805	1277	2422	2077
+Strain	Vanderwaltozyma polyspora ATCC 22028	Vanpo_ATCC_22028	vpo	1	UP000000267	1137	2278	1964
+Strain	Yarrowia lipolytica CLIB122	Yarli_CLIB122	yli	1	UP000001300	1293	2376	2031
+Strain	Nadsonia fulvescens var. elongata DSM 6958	Nadfu_DSM_6958	nfu	1	UP000095009	1181	2326	2031
+Strain	Ogataea parapolymorpha DL-1	Ogapa_DL_1	opm	1	UP000008673	1198	2378	2025
+Strain	Metschnikowia bicuspidata var. bicuspidata NRRL YB-4993	Metbi_NRRL_YB4993	mbi	1	UP000092555	1180	2350	2020
+Strain	Meyerozyma guilliermondii ATCC 6260	Meygu_ATCC_6260	mgu	1	UP000001997	1274	2404	2051
+Strain	Schizosaccharomyces pombe 972h-	Schpo_972h	spo	1	UP000002485	1064	2021	1789
+Strain	Pichia membranifaciens NRRL Y-2026	Picme_NRRL_Y2026	pme	1	UP000094455	1162	2312	1996
+Strain	Cyberlindnera jadinii NRRL Y-1542	Cybja_NRRL_Y1542	cut	1	UP000094389	1288	2427	2050
+Strain	Hanseniaspora valbyensis NRRL Y-1626	Hanva_NRRL_Y1626	hva	1		974	2061	1816
+Strain	Spathaspora passalidarum NRRL Y-27907	Spapa_NRRL_Y27907	spa	1	UP000000709	1239	2402	2041
+Strain	Komagataella phaffii GS115	Komph_GS115	ppa	1	UP000000314	1141	2337	2001
+Strain	Wickerhamomyces anomalus NRRL Y-366-8	Wican_NRRL_Y336_8	wan	1	UP000094112	1346	2450	2078
+Strain	Candida parapsilosis CDC 317	Canpa_CDC_317	cpr	1				
+Strain	Saitoella complicata NRRL Y-17804	Saico_NRRL_Y17804	sai	1		1127	2387	2047
+Strain	Hypocrea jecorina QM6a	Hypje_QM6a	tre	1	UP000008984	1248	2418	2084
+Strain	Kuraishia capsulata CBS 1993	Kurca_CBS_1993	kcp	1	UP000019384	1241	2408	2051
+Strain	Lachancea thermotolerans CBS 6340	Lacth_CBS_6340	lth	1	UP000002036	1182	2378	2048
+Strain	Emericella nidulans CBS 112.46	Emeni_CBS_112_46	ani	1	UP000000560			
+Strain	Ascoidea rubescens DSM 1968	Ascru_DSM_1968	aru	1	UP000095038	1209	2337	2023
+Strain	Babjeviella inositovora NRRL Y-12698	Babin_NRRL_Y12698	bin	1	UP000094336	1290	2412	2055
+Strain	Brettanomyces bruxellensis AWRI1499	Dekbr_AWRI1499	dbx	1		1180	2315	1995
+Strain	Debaryomyces hansenii CBS 767	Debha_CBS_767	dha	1	UP000000599	1311	2424	2066
+Strain	Zygosaccharomyces rouxii CBS 732	Zygro_CBS_732	zro	1	UP000008536	1146	2363	2034
+Strain	Pachysolen tannophilus NRRL Y-2460	Pacta_NRRL_Y2460	pta	1	UP000094236	1223	2402	2032
+Strain	Rhodotorula graminis WP1	Rhogr_WP1	rgm	1	UP000053890	1038	2381	2038
+Level1	Saccharomycodaceae-Saccharomycetaceae superclade	SS_clade	hva|kla|lth|zro|sce|vpo	6		1278	2456	2075
+Level2	PSS superclade	PSS_clade	wan|cut|hva|kla|lth|zro|sce|vpo	8		1354	2514	2100
+Level2	Pichiaceae superclade	Pichia_clade	pta|ppa|kcp|car|opm|dbx|pme|pku	8		1239	2486	2091
+Level2	CTG superclade	CTG	bin|cpr|mbi|mgu|dha|pic|spa	7		1242	2536	2120
+Level3	ACPPSS superclade	ACPPSS_clade	aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	24		1437	2617	2165
+Level4	Oleaginous yeast	YeastOleag	lst|yli	2		1203	2484	2106
+Level4	Fermentering yeast	YeastFerm	arx|nfu|aru|pta|ppa|kcp|car|opm|dbx|pme|pku|bin|cpr|mbi|mgu|dha|pic|spa|wan|cut|hva|kla|lth|zro|sce|vpo	26		1466	2648	2184

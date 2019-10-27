@@ -5,6 +5,8 @@ from libsbml import *
 import pandas as pd
 import urllib
 
+import xml.etree.cElementTree as ET
+import urllib2
 
 
 
@@ -14,7 +16,7 @@ import urllib
 def process_fog_annotation(oid,fog_annotation):
 	"""
 	Could and should clean this up
-	Purpose is to take in a fog_annotation in AYbRAHAM and oid
+	Purpose is to take in a fog_annotation in FYRMENT and oid
 	Check if all essential subunits are present
 	"""
 	def process_complex_variants(oid,fog_annotation):
@@ -200,9 +202,12 @@ def create_compartments():
 	#
 	for c,row in df_c.iterrows():
 		c=str(c)
+		print(c)
 		c1 = model.createCompartment()
 		status=c1.setId(c)
 		check_status(status,'compartment_id',c)
+		# needed to add CV term
+		status=c1.setMetaId(c)
 		status=c1.setName(str(df_c['compartment_name'][c]))
 		check_status(status,'compartment_name',str(df_c['compartment_name'][c]))
 		status=c1.setConstant(False)
@@ -210,6 +215,22 @@ def create_compartments():
 		#c1.setSize(1)
 		#c1.setSpatialDimensions(3)
 		#c1.setUnits('litre')
+		value=df_c['GO term'][c]
+		cv = CVTerm();
+		cv.setQualifierType(BIOLOGICAL_QUALIFIER);
+		cv.setBiologicalQualifierType(BQB_IS);
+		cv.addResource('http://identifiers.org/go/'+str(value));
+		c1.addCVTerm(cv);
+		value_bigg=df_c['bigg.compartment'][c]
+		if len(value_bigg)>0:
+			cv = CVTerm();
+			cv.setQualifierType(BIOLOGICAL_QUALIFIER);
+			cv.setBiologicalQualifierType(BQB_IS);
+			cv.addResource('http://identifiers.org/bigg.compartment/'+str(value_bigg));
+			c1.addCVTerm(cv);
+
+
+
 
 
 
@@ -223,6 +244,16 @@ def get_metabolites_in_reactions():
 	return output_reaction_metabolites
 
 
+
+
+
+
+
+
+
+
+
+
 def create_species(name):
 	metabolites_in_reactions=get_metabolites_in_reactions()
 	# Appears to be metabolites in pan-Fungi, but not captured in lower level GENRE
@@ -234,6 +265,7 @@ def create_species(name):
 	else:
 		mets_to_add=[(met,met+'_'+c,c) for met,row in mets.iterrows()  for c in df_c.index.tolist() if met+'['+c+']' in metabolites_in_reactions]
 	for met,met_compartment,compartment in mets_to_add:
+		#break
 		print met
 		name=str(mets['Metabolite description'][met])
 		formula=str(mets['Metabolite charged formula'][met])
@@ -241,10 +273,16 @@ def create_species(name):
 		kegg_id=str(mets['Metabolite KEGG ID'][met])
 		pubchem_cid=str(mets['Metabolite PubChem ID'][met])
 		chebi_id=str(mets['Metabolite CheBI ID'][met])
-		metacyc_id=str(mets['metacyc'][met])
+		metacyc_id=str(mets['MetaCyc'][met])
 		inchi=str(mets['InChI'][met])
 		smiles=str(mets['SMILES'][met])
-			# assign to xml tag
+		inchikey=str(mets['InChIKey'][met])
+		mnx=str(mets['MetNetX'][met])
+		bigg=str(mets['BiGG'][met])
+		# do not do anything with spider for now
+		spider=str(mets['ChemSpiderID'][met])
+		sbo=str(mets['SBO'][met])
+		# assign to xml tag
 		s1 = model.createSpecies()
 		status=s1.setId(str('M_'+met_compartment))
 		check_status(status,'species_id',str('M_'+met_compartment))
@@ -257,6 +295,7 @@ def create_species(name):
 		s1.setConstant(False)
 		s1.setBoundaryCondition(False)
 		s1.setHasOnlySubstanceUnits(False)
+		s1.setSBOTerm(sbo)
 		#
 		splugin = s1.getPlugin("fbc")
 		if splugin != None: 
@@ -271,7 +310,10 @@ def create_species(name):
 			('kegg.compound',kegg_id),
 			('metacyc.compound',metacyc_id),
 			('pubchem.compound',pubchem_cid),
-			('inchi',inchi)]
+			('inchi',inchi),
+			('inchikey',inchikey),
+			('mnx.species',mnx),
+			('bigg.species',bigg)]
 		#
 		for key,value in sorted(compound_identifiers):
 			if len(value)>0:
@@ -304,10 +346,13 @@ def create_reactions():
 		rxnid=str(rxnid)
 		rxn_name=str(rxns['Reaction'][rxnid])
 		subsystem=rxns['Subsystem'][rxnid]
+		if 'exchange reaction' in subsystem:
+			subsystem='Exchange reaction'
 		reversible=rxns['Reversible'][rxnid]
 		ub=rxns['UB'][rxnid]
 		lb=rxns['LB'][rxnid]
 		objective=rxns['Objective'][rxnid]
+		sbo=str(rxns['SBO'][rxnid])
 		# literature
 		notes=rxns['Notes'][rxnid]
 		references=str(rxns['References'][rxnid])
@@ -316,6 +361,8 @@ def create_reactions():
 		rhea=str(rxns['rhea'][rxnid])
 		metacyc_reaction=str(rxns['metacyc'][rxnid])
 		kegg_reaction=str(rxns['kegg'][rxnid])
+		bigg_reaction=str(rxns['bigg'][rxnid])
+		mnx_reaction=str(rxns['MetaNetX'][rxnid])
 		# gene annotations
 		complexes=rxns['Complex'][rxnid]
 		fog_annotation=rxns['FOG'][rxnid]
@@ -330,6 +377,7 @@ def create_reactions():
 		check_status(status,'reaction_metid','R_'+rxnid)
 		status=r1.setName(rxn_name)
 		check_status(status,'reaction_name',rxn_name)
+		status=r1.setSBOTerm(sbo)
 		if reversible==1:
 			r1.setReversible(True)
 		elif reversible==0:
@@ -355,7 +403,9 @@ def create_reactions():
 			('rhea',rhea),
 			('kegg.reaction',kegg_reaction),
 			('metacyc.reaction',metacyc_reaction),
-			('ec-code',ec_code)]
+			('ec-code',ec_code),
+			('mnx.reaction',mnx_reaction),
+			('bigg.reaction',bigg_reaction)]
 		# identifiers
 		for key,values in sorted(reaction_identifiers):
 			if len(values)>0:
@@ -402,7 +452,8 @@ def create_reactions():
 			complex_variants=[';'.join(complex_variant) for oid in inclusion_oids for complex_variant in process_fog_annotation(oid,fog_annotation).values()]
 			complex_variants=set(complex_variants)
 			# need to account for complex annotations that are forced via organisms inclusion
-			if len(complex_variants)==0 and any(oid in inclusion_oids for oid in bypass_organism.split('|')):
+			bypass_list=['BIOMASS','DEMAND','DIFFUSION','EQUILIBRIUM','ESSENTIAL','EXCHANGE','SPONTANEOUS','ORPHAN']
+			if len(complex_variants)==0 and ( any(oid in inclusion_oids for oid in bypass_organism.split('|')) or bypass_model in bypass_list):
 				complex_variants=[ ';'.join([subunit for subcomplex in variant.split('&&') for subunit in subcomplex.split('&')]) for variant in fog_annotation.replace('(','').replace(')','').replace(' ','').split('||') ]
 				complex_variants=[';'.join([fog for fog in variant.split(';') if any( len(aybrah[oid][fog[:8]])>0  for oid in inclusion_oids)     ])  for variant in complex_variants]
 				complex_variants=filter(None,complex_variants)
@@ -433,7 +484,8 @@ def create_reactions():
 				rplugin = r1.getPlugin("fbc")
 				gpr=rplugin.createGeneProductAssociation()
 				# add complex in notes
-				for c in complexes.replace('&','||').replace('(','').replace(')','').replace(' ','').split('||'):
+				cpxs=complexes.replace('&','||').replace('(','').replace(')','').replace(' | ','||').replace(' ','').split('||')
+				for c in set(cpxs):
 					if len(c)==0:
 						continue
 					if c[:3]=='CPX':
@@ -504,12 +556,18 @@ def check_status(status,tag,entry):
 		fname=taxonomy['name'][index]+'.txt'
 		open(fname,'a').write('\t'.join([str(status),tag,entry])+'\n')
 
-def create_geneproducts():
+def create_geneproducts(uniprot_proteome):
 	print('parse gene reactions')
 	# this is adding all of them
 	fogs=filter(None,'|'.join(rxns['FOG'].tolist()).replace('(','').replace(')','').replace(' ','').replace('&','|').split('|'))
 	fogs=sorted(list(set([fog[:8] for fog in fogs])))
 	mplugin = model.getPlugin("fbc");
+	# load uniprot, could also use strain variable but not all strains are populated
+	#if len(uniprot_proteome)>0:
+	#	tree=ET.parse(urllib2.urlopen('https://www.uniprot.org/uniprot/?query=proteome:'+uniprot_proteome+'&format=xml'))
+	#	root = tree.getroot()
+	#else:
+	#	root={}
 	#
 	for fog in fogs:
 		#print fog
@@ -525,6 +583,7 @@ def create_geneproducts():
 				gene = mplugin.createGeneProduct();
 				status=gene.setId('G_'+locus_tag);
 				check_status(status,'gene_id',locus_tag)
+				gene.setSBOTerm('SBO:0000243')
 				#status=gene.setMetaId('G_'+locus_tag);
 				#check_status(status,'gene_metaid',locus_tag)
 				if len(protein_name)>0:
@@ -542,6 +601,15 @@ def create_geneproducts():
 				else:
 					status=gene.setLabel('G_'+locus_tag);
 					check_status(status,'gene_label','G_'+locus_tag)
+				#
+				#accessions_kegg,accessions_refseq,accessions_gids=get_attributes(locus_tag)
+				#for value in accessions_kegg:
+				#	cv = CVTerm();
+				#	cv.setQualifierType(BIOLOGICAL_QUALIFIER);
+				#	cv.setBiologicalQualifierType(BQB_IS_ENCODED_BY);
+				#	url=uri_genes['kegg.genes']+value
+				#	cv.addResource(url.replace('https','http'));
+				#	gene.addCVTerm(cv);
 		else:
 			seqids=filter(None,[seqid for oid in inclusion_oids for seqid in aybrah[oid][fog].split(';')])
 			if len(seqids)>0:
@@ -558,6 +626,23 @@ def create_geneproducts():
 
 
 
+
+
+
+def get_attributes(locus_tag):
+	for entry in root.getchildren():
+		for accession in entry.findall('{http://uniprot.org/uniprot}accession'):
+			if accession.text == locus_tag:	
+				accessions_kegg=[db.attrib['id'] for db in entry.findall('{http://uniprot.org/uniprot}dbReference') if db.attrib['type']=='KEGG']
+				accessions_refseq=[db.attrib['id'] for db in entry.findall('{http://uniprot.org/uniprot}dbReference') if db.attrib['type']=='RefSeq']
+				accessions_gids=[db.attrib['id'] for db in entry.findall('{http://uniprot.org/uniprot}dbReference') if db.attrib['type']=='GeneID']
+				return accessions_kegg,accessions_refseq,accessions_gids
+
+
+
+
+
+
 # what about gfp notes and others?
 
 
@@ -569,14 +654,25 @@ uri_other={
 
 
 
+uri_genes={
+	'refseq':'https://identifiers.org/refseq',
+	'uniprot':'https://identifiers.org/uniprot',
+	'kegg.genes':'https://identifiers.org/kegg.genes/',
+	'ncbigi':'https://identifiers.org/ncbigi/',
+	'ncbigene':'https://identifiers.org/ncbigene/',
+	'ncbiprotein':'https://identifiers.org/ncbiprotein/'
+}
+
+
 
 # reaction
 uri_reactions={
-	'rhea':'http://identifiers.org/rhea/',
-	'metacyc.reaction':'http://identifiers.org/metacyc.reaction/',
-	'kegg.reaction':'http://identifiers.org/kegg.reaction/',
-	'bigg.reaction':'http://identifiers.org/bigg.reaction/',
-	'ec-code':'http://identifiers.org/ec-code/'}
+	'rhea':'http://identifiers.org/rhea/', # done
+	'metacyc.reaction':'http://identifiers.org/metacyc.reaction/', # done
+	'kegg.reaction':'http://identifiers.org/kegg.reaction/', # done
+	'bigg.reaction':'http://identifiers.org/bigg.reaction/', # done
+	'ec-code':'http://identifiers.org/ec-code/', # done
+	'mnx.reaction':'http://identifiers.org/metanetx.reaction/'} # done
 
 # compound
 uri_compounds={
@@ -585,7 +681,16 @@ uri_compounds={
 	'bigg.metabolite':'http://identifiers.org/bigg.metabolite/',
 	'kegg.compound':'http://identifiers.org/kegg.compound/',
 	'pubchem.compound':'http://identifiers.org/pubchem.compound/',
-	'inchi':'http://identifiers.org/inchi/'}
+	'inchi':'http://identifiers.org/inchi/',
+	'inchikey':'http://identifiers.org/inchikey/',
+	'mnx.species':'http://identifiers.org/metanetx.chemical/',
+	'bigg.species':'http://identifiers.org/bigg.metabolite/'}
+
+
+uri_compartments={
+	'mnx_compartment':'http://identifiers.org/metanetx.compartment/',
+	'bigg_compartment':'http://identifiers.org/bigg.compartment/'
+}
 
 # literature
 uri_literature={
@@ -657,11 +762,16 @@ https://www.ebi.ac.uk/miriam/main/collections/MIR:00000014
 
 """
 
+root_aybrah='../aybrah/'
 
-url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
+# local_path
+#root_aybrah='https://github.com/kcorreia/aybrah/raw/master/'
 
 
-taxonomy=pd.read_excel(url_aybrah_xlsx,sheet_name='taxon_nodes')
+path_aybrah_xlsx=root_aybrah+'aybrah.xlsx'
+
+
+taxonomy=pd.read_excel(path_aybrah_xlsx,sheet_name='taxon_nodes').fillna('')
 #taxonomy.drop(46)
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)
@@ -671,14 +781,18 @@ taxon_order=zip(*sorted([(taxonomy.level.tolist().index(taxon),taxon) for taxon 
 
 
 
-version_aybrah=urllib.urlopen('https://github.com/kcorreia/aybrah/raw/master/version.txt').read()
-aybrah=pd.read_csv('https://github.com/kcorreia/aybrah/raw/master/aybrah.tsv',sep='\t').fillna('').set_index('FOG')
+version_aybrah=urllib.urlopen(root_aybrah+'version.txt').read()
+aybrah=pd.read_csv(root_aybrah+'aybrah.tsv',sep='\t').fillna('').set_index('FOG')
 #aybrah=pd.read_csv('/Volumes/5TB/Organized/github/aybrah_old/aybrah_'+version_aybrah+'.tsv',sep='\t').fillna('').set_index('FOG')
 
-aybrah_excel=pd.read_excel(url_aybrah_xlsx,sep='\t').fillna('').set_index('FOG')
+aybrah_excel=pd.read_excel(path_aybrah_xlsx,sep='\t').fillna('').set_index('FOG')
 
 
-organisms=pd.read_excel(url_aybrah_xlsx,sheet_name='curated_taxonomy_fungi').fillna('')
+organisms=pd.read_excel(path_aybrah_xlsx,sheet_name='curated_taxonomy_fungi').fillna('')
+
+
+
+
 
 
 """
@@ -687,16 +801,20 @@ no blank mets
 """
 
 
-version_aybraham=urllib.urlopen('https://github.com/kcorreia/aybraham/raw/master/version.txt').read()
 
 
-url_aybraham_xlsx='https://github.com/kcorreia/aybraham/raw/master/aybraham.xlsx'
 
+root_fyrment=''
+#url_fyrment_xlsx='https://github.com/LMSE/fyrment/raw/master/fyrment.xlsx'
 
+version_fyrment=open(root_fyrment+'version.txt','r').read()
+
+path_fyrment_xlsx=root_fyrment+'fyrment.xlsx'
 #encoding='utf-8'
-rxns=pd.read_excel(url_aybraham_xlsx,sheet_name='reactions',encoding='ascii',skiprows=[0]).fillna('').set_index('Rxn name')
-mets=pd.read_excel(url_aybraham_xlsx,sheet_name='metabolites',encoding='ascii').fillna('').set_index('Metabolite name')
-df_c=pd.read_excel(url_aybraham_xlsx,sheet_name='compartments',encoding='ascii').set_index('compartment_id')
+
+rxns=pd.read_excel(path_fyrment_xlsx,sheet_name='reactions',encoding='ascii',skiprows=[0]).fillna('').set_index('Rxn name')
+mets=pd.read_excel(path_fyrment_xlsx,sheet_name='metabolites',encoding='ascii').fillna('').set_index('Metabolite name')
+df_c=pd.read_excel(path_fyrment_xlsx,sheet_name='compartments',encoding='ascii').set_index('compartment_id').fillna('')
 
 oids=aybrah.columns[2:].tolist()
 
@@ -719,33 +837,46 @@ oid_rxns=get_rxn_inclusion()
 
 
 
-
 #for index,row in taxonomy[taxonomy['level']=='Strain'].iterrows():
 for index,row in taxonomy.iterrows():
-#for index in range(144,151):
-#for index in [111]:# pic
-#for index in [110]:# sce
 	level=taxonomy['level'][index]
 	level_order=taxon_order.index(level)
 	name=taxonomy['name'][index]
 	readable=taxonomy['readable'][index].replace('.','_')
-	name
+	#
+	path_xml_dir = './genre/xml/'+str(level_order).zfill(2)+'_'+level.lower()
+	path_xml_file=path_xml_dir+'/i'+readable+'.xml'
+	if os.path.isfile(path_xml_file):
+		print('skip '+readable)
+		continue
+	else:
+		print('build '+readable)
+	#name
 	inclusion_oids=taxonomy['oids'][index].split('|')
 	# only include oid annotated in aybrah
 	inclusion_oids=[oid for oid in inclusion_oids if oid in aybrah.columns[2:]]
-	inclusion_rxns=set([rxnid for oid in inclusion_oids for rxnid in oid_rxns[oid].keys() if oid in oid_rxns.keys()])
-	#
-	model_id=name.replace(' ','_').replace('-','_')+'_GENRE_AYbRAHAM_'+version_aybraham.replace('.','_')
-	if level=='Strain':
+	if name=='Eukaryota' or name=='Fungi':
+		inclusion_rxns=rxns.index.tolist()
+	elif len(inclusion_oids)==0:
 		continue
-		model_metaid=name.replace(' ','_')+'_GENRE_AYbRAHAM_'+version_aybraham
+	else:
+		inclusion_rxns=set([rxnid for oid in inclusion_oids for rxnid in oid_rxns[oid].keys() if oid in oid_rxns.keys()])
+	# used to debug stoich consistency
+	#inclusion_rxns=[r for r in inclusion_rxns if r not in skip]
+	#
+	model_id=name.replace(' ','_').replace('-','_')+'_GENRE_FYRMENT_'+version_fyrment.replace('.','_')
+	if level=='Strain':
+		#continue
+		model_metaid=name.replace(' ','_')+'_GENRE_FYRMENT_'+version_fyrment
 		model_name=name+' genome-scale network reconstruction'
 		oid=taxonomy['oids'][index]
+		uniprot_proteome=taxonomy['uniprot:proteome'][index]
 	else:
 		#continue
-		model_metaid=name.replace(' ','_')+'_GENRE_AYbRAHAM_'+version_aybraham
+		model_metaid=name.replace(' ','_')+'_GENRE_FYRMENT_'+version_fyrment
 		model_name=name+' genome-scale network reconstruction'
 		oid=None
+		uniprot_proteome=None
 	#if os.path.exists(model_id+'.xml'):
 	#	continue
 	###################################
@@ -767,8 +898,8 @@ for index,row in taxonomy.iterrows():
 	model.setId(str(model_id))
 	model.setMetaId(str(model_metaid))
 	model.setName(str(model_name))
-	# include AYbRAH, AYbRAHAM versions
-	notes=['<p>'+db+' DB version: '+str(v)+'</p>' for db,v in zip(['AYbRAH','AYbRAHAM'],[version_aybrah,version_aybraham])]
+	# include AYbRAH, FYRMENT versions
+	notes=['<p>'+db+' DB version: '+str(v)+'</p>' for db,v in zip(['AYbRAH','FYRMENT'],[version_aybrah,version_fyrment])]
 	note = '<body xmlns="http://www.w3.org/1999/xhtml">'+''.join(notes)+'</body>'
 	model.appendNotes(note)
 	#
@@ -802,11 +933,9 @@ for index,row in taxonomy.iterrows():
 	#
 	###################################
 	#
-	create_geneproducts()
+	create_geneproducts(uniprot_proteome)
 	#
 	###################################
-	path_xml_dir = './genre/xml/'+str(level_order).zfill(2)+'_'+level.lower()
-	path_xml_file=path_xml_dir+'/i'+readable+'.xml'
 	if not os.path.exists(path_xml_dir):
 		os.makedirs(path_xml_dir)
 	writeSBML(document,str(path_xml_file))
@@ -815,9 +944,8 @@ for index,row in taxonomy.iterrows():
 
 
 
-
-df_dna=pd.read_csv('https://github.com/kcorreia/aybraham/raw/master/biomass/aybraham_dna_stoich.txt',sep='\t').set_index('oid')
-#
+#df_dna=pd.read_csv('./biomass/dna_stoich.txt',sep='\t').set_index('oid')
+df_dna=pd.read_excel('./biomass/dna_stoich.xlsx').set_index('oid')
 
 
 # update DNA composition, and other organism specific constraints
@@ -831,11 +959,13 @@ for index,row in taxonomy.iterrows():
 	readable=taxonomy['readable'][index].replace('.','_')
 	path_xml_dir = './genre/xml/'+str(level_order).zfill(2)+'_'+level.lower()
 	path_xml_file=path_xml_dir+'/i'+readable+'.xml'
-	if level=='Strain':
+	oid=taxonomy['oids'][index]
+	if oid in ['cpr','ani']:
+		continue
+	elif level=='Strain':
 		print name
 	else:
 		continue
-	oid=taxonomy['oids'][index]
 	#
 	reader = SBMLReader()
 	#
@@ -896,38 +1026,6 @@ for index,row in taxonomy.iterrows():
 
 
 
-
-
-
-"""
-# update the compartment..
-
-for index,row in taxonomy[taxonomy['level']=='Strain'].iterrows():
-	name=taxonomy['name'][index]
-	level=taxonomy['level'][index]
-	level_order=taxon_order.index(level)
-	model_id=level+'_'+name.replace(' ','_').replace('-','_')+'_AYbRAHAM_'+version_aybraham.replace('.','_')+'_GENRE'
-	if level=='Strain':
-		print name
-	oid=taxonomy['oids'][index]
-	#
-	model_xml=str(level_order+1).zfill(2)+'_'+model_id+'.xml'
-	#
-	reader = SBMLReader()
-	document = reader.readSBML('./xml/'+model_xml)
-	model = document.getModel()
-	#
-	for reaction in model.getListOfReactions():
-		if reaction.id=='R_BIOMASS_PROTEIN_iMM904_TRNA_1G':
-			#break
-			# update the biomass
-			for reactant in reaction.reactants:
-				#reactant.species=reactant.species[:-1]+'c'
-				reactant.setId(reactant.species[:-1]+'c')
-			for product in reaction.products:
-				product.species=product.species[:-1]+'c'
-	writeSBML(document,'./xml/'+str(level_order+1).zfill(2)+'_'+model_id+'.xml')
-"""
 
 
 

@@ -18,7 +18,6 @@ def write_xml_to_xlsx(level_order,level,readable):
 	metabolites=root.findall('.//{http://www.sbml.org/sbml/level3/version1/core}species')
 	compartments=root.findall('.//{http://www.sbml.org/sbml/level3/version1/core}compartment')
 	reactions=root.findall('.//{http://www.sbml.org/sbml/level3/version1/core}reaction')
-	metabolites=root.findall('.//{http://www.sbml.org/sbml/level3/version1/core}species')
 	objectives=root.findall('.//{http://www.sbml.org/sbml/level3/version1/fbc/version2}listOfObjectives')
 	#
 	objective_dict={reaction_objective.attrib['{http://www.sbml.org/sbml/level3/version1/fbc/version2}reaction'][2:]: \
@@ -118,6 +117,7 @@ def write_xml_to_xlsx(level_order,level,readable):
 	model_mets=pd.DataFrame(columns=names)
 	#
 	for metabolite in metabolites:
+		#break
 		#
 		met_id=metabolite.attrib['id'][2:-2]+'['+metabolite.attrib['id'][-1:]+']'
 		print met_id
@@ -160,7 +160,7 @@ def write_xml_to_xlsx(level_order,level,readable):
 		else:
 			metacyc=''
 		smiles=''
-		details=[met_id,met_description,'',formula,charge,compartment,kegg,pubchem_compound,chebi,inchi,smiles]
+		details=[met_id,met_description,'',formula_charged,charge,compartment,kegg,pubchem_compound,chebi,inchi,smiles]
 		model_mets.loc[len(model_mets)]=details
 	path_xlsx_dir = './genre/xlsx/'+str(level_order).zfill(2)+'_'+level.lower()+'/'
 	if not os.path.exists(path_xlsx_dir):
@@ -173,10 +173,14 @@ def write_xml_to_xlsx(level_order,level,readable):
 
 
 
+#root_aybrah='../aybrah/'
 
-url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
+root_aybrah='https://github.com/kcorreia/aybrah/raw/master/'
 
-taxonomy=pd.read_excel(url_aybrah_xlsx,sheet_name='taxon_nodes')
+path_aybrah_xlsx=root_aybrah+'aybrah.xlsx'
+
+
+taxonomy=pd.read_excel(path_aybrah_xlsx,sheet_name='taxon_nodes')
 #taxonomy.drop(46)
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)
@@ -196,17 +200,4 @@ for index,row in taxonomy.iterrows():
 	readable=taxonomy['readable'][index].replace('.','_')
 	write_xml_to_xlsx(level_order,level,readable)
 
-"""
-
-model_xml='13_Strain_Scheffersomyces_stipitis_CBS_6054_AYbRAHAM_0_0_6_GENRE.xml'
-tree = ET.parse('./xml/'+model_xml)
-root = tree.getroot()
-
-
-reactions=root.findall('.//{http://www.sbml.org/sbml/level3/version1/core}reaction')
-for reaction in reactions:
-	if reaction.attrib['id']=='R_GAPD':
-		break
-
-"""
 

@@ -7,7 +7,7 @@ import pandas as pd
 def process_fog_annotation(oid,fog_annotation):
 	"""
 	Could and should clean this up
-	Purpose is to take in a fog_annotation in AYbRAHAM and oid
+	Purpose is to take in a fog_annotation in FYRMENT and oid
 	Check if all essential subunits are present
 	"""
 	def process_complex_variants(oid,fog_annotation):
@@ -61,30 +61,33 @@ def process_fog_annotation(oid,fog_annotation):
 
 
 
+root_aybrah='../aybrah/'
 
 
-version_aybrah=urllib.urlopen('https://github.com/kcorreia/aybrah/raw/master/version.txt').read()
-aybrah=pd.read_csv('https://github.com/kcorreia/aybrah/raw/master/aybrah.tsv',sep='\t').fillna('').set_index('FOG')
+
+aybrah=pd.read_csv(root_aybrah+'aybrah.tsv',sep='\t').fillna('').set_index('FOG')
+
+version_aybrah=urllib.urlopen(root_aybrah+'version.txt').read()
+
+path_aybrah_xlsx=root_aybrah+'aybrah.xlsx'
+organisms=pd.read_excel(path_aybrah_xlsx,sheet_name='curated_taxonomy_fungi').fillna('')
+indices_to_drop=organisms[organisms.oid.str.contains('ani|cpr')].index.tolist()
+organisms=organisms.drop(indices_to_drop)
 
 
-url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
-organisms=pd.read_excel(url_aybrah_xlsx,sheet_name='curated_taxonomy_fungi').fillna('')
-organisms=organisms.drop([6,21])
-
-
-taxonomy=pd.read_csv('https://github.com/kcorreia/aybraham/raw/master/taxonomy_level_oids.txt',sep='\t')
+taxonomy=pd.read_excel(path_aybrah_xlsx,sheet_name='taxon_nodes').fillna('')
+#taxonomy.drop(46)
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)
 
 
-
 # need to make sure ? fogs are captured
 
-url_aybraham_xlsx='https://github.com/kcorreia/aybraham/raw/master/aybraham.xlsx'
-rxns=pd.read_excel(url_aybraham_xlsx,sheet_name='reactions',encoding='ascii',skiprows=[0]).fillna('').set_index('Rxn name')
+path_fyrment_xlsx='fyrment.xlsx'
+rxns=pd.read_excel(path_fyrment_xlsx,sheet_name='reactions',encoding='ascii',skiprows=[0]).fillna('').set_index('Rxn name')
 
 
-writer = ExcelWriter('./complexes/aybraham_complex_curation.xlsx')
+writer = ExcelWriter('./complexes/fyrment_complex_curation.xlsx')
 
 fog_annotations=list(set(rxns[rxns.FOG.str.contains('&')].FOG.tolist()))
 for number,fog_annotation in enumerate(fog_annotations):
@@ -119,7 +122,6 @@ for number,fog_annotation in enumerate(fog_annotations):
 	df_temp.to_excel(writer,str(number))
 
 
-#df.loc[i, 'thumbnail'] = filename
 
 
 
@@ -144,7 +146,7 @@ greyFill = PatternFill(start_color='a5a5a5',
 
 
 
-wb = load_workbook(filename = './complexes/aybraham_complex_curation.xlsx' )
+wb = load_workbook(filename = './complexes/fyrment_complex_curation.xlsx' )
 
 
 for sheetname in wb.sheetnames:
@@ -161,7 +163,7 @@ for sheetname in wb.sheetnames:
 				cell.fill = greyFill
 
 
-wb.save('./complexes/aybraham_complex_curation.xlsx')
+wb.save('./complexes/fyrment_complex_curation.xlsx')
 
 
 # https://stackoverflow.com/questions/30484220/python-fill-cells-with-colors-using-openpyxl
@@ -171,4 +173,46 @@ wb.save('./complexes/aybraham_complex_curation.xlsx')
 	mismatching_rxn_columns=[cell.value \
 			for header,col in zip(rxn_headers,ws.iter_cols(min_row=1, max_col=15, max_row=1)) \
 			for cell in col if header != cell.value]
+"""
+
+"""
+complex_variants_previous = pd.ExcelFile('./complexes/fyrment_complex_curation_prev.xlsx')
+complex_variants_current = pd.ExcelFile('./complexes/fyrment_complex_curation.xlsx')
+
+
+complex_variants_current.sheet_names
+
+df_prev={sheet:pd.read_excel('./complexes/fyrment_complex_curation_prev.xlsx',sheetname=sheet) for sheet in complex_variants_previous.sheet_names}
+
+df_current={sheet:pd.read_excel('./complexes/fyrment_complex_curation.xlsx',sheetname=sheet) for sheet in complex_variants_current.sheet_names}
+
+def matching_complex(rxns_prev):
+	for sheet_current in complex_variants_current.sheet_names:
+		rxns_current=set(df_current[sheet_current]['Rxn name']['rgm'].split(';'))
+		if rxns_current==rxns_prev:
+			return sheet_current
+
+
+sheets_prev=complex_variants_previous.sheet_names
+
+
+while len(sheets_prev)>0:
+	sheet_prev=sheets_prev.pop(0)
+	#break
+	rxns_prev=set(df_prev[sheet_prev]['Rxn name']['rgm'].split(';'))
+	sheet_current=matching_complex(rxns_prev)
+	#
+	oids_prev=df_prev[sheet_prev][df_prev[sheet_prev]['Include']>0].index.tolist()
+	if sheet_current==None:
+		oids_current=[]
+	else:
+		oids_current=df_current[sheet_current][df_current[sheet_current]['Include']>0].index.tolist()
+	if set(oids_prev)!=set(oids_current):
+		print(rxns_prev)
+		sheet_prev,sheet_current
+		set(oids_current)-set(oids_prev)
+		set(oids_prev)-set(oids_current)
+		print('\n\n\n')
+
+
 """

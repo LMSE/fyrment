@@ -12,9 +12,15 @@ As the total storage of all the GENRE's is approaching 1 GB
 """
 
 
-url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
+#url_aybrah_xlsx='https://github.com/kcorreia/aybrah/raw/master/aybrah.xlsx'
 
-taxonomy=pd.read_excel(url_aybrah_xlsx,sheet_name='taxon_nodes')
+root_aybrah='../aybrah/'
+#root_aybrah='https://github.com/kcorreia/aybrah/raw/master/'
+
+path_aybrah_xlsx=root_aybrah+'aybrah.xlsx'
+
+
+taxonomy=pd.read_excel(path_aybrah_xlsx,sheet_name='taxon_nodes')
 #taxonomy.drop(46)
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)

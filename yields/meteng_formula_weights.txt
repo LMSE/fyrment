@@ -1,0 +1,13 @@
+EX_succ_e,116.07216
+EX_glyclt_e,75.04342
+DM_ptrc_c,90.16736
+EX_iamoh_e,88.14818
+EX_2mbtoh_e,88.14818
+EX_2phetoh_e,122.1644
+EX_tyrosol_e,138.1638
+EX_ind3eth_e,161.2
+EX_ibutoh_e,74.122
+DM_ERGST,396.65
+DM_lycop_c,536.873
+DM_farnesene,204.36
+DM_13bdo__R,90.12

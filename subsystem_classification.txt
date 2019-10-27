@@ -1,0 +1,36 @@
+biomass	
+central metabolism	
+oxidative phosphorylation	
+redox metabolism	other
+polyphosphate metabolism	other
+amino acids	
+carnitine	other
+oxidoreductase	other
+purine nucleotides	
+pyrimidine nucleotides	
+cAMP and cGMP metabolism	other
+dinucleoside triphosphate hydrolase	other
+vitamins	
+minerals	
+sugars	
+carbohydrates	
+alcohols	other
+acids	other
+aromatics	
+alternative nitrogen sources	
+fatty acids	
+phospholipids	
+aralkylamines	other
+spermine and spermidine	other
+sphingolipids	
+ceramides	
+isoprenoids	
+secondary metabolism	
+glycosylation	
+inositol polyphosphates	
+cellular processes	other
+equilbrium reactions	other
+tRNA metabolism	
+transport	
+exchange reaction	other
+demand	other
