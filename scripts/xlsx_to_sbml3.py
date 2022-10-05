@@ -6,20 +6,63 @@ import pandas as pd
 import urllib
 
 import xml.etree.cElementTree as ET
-import urllib2
 
 
 
+
+"""
+
+This script creates metabolic networks for different fungal taxonomies
+by using FYRMENT and AYbRAH resources.
+
+
+Example of a reaction in FYRMENT:
+	rxnid: ALDD2y
+	rxnd description: Aldehyde dehydrogenase (acetaldehyde, NADP)
+	formula: 'acald[c] + nadp[c] + h2o[c] -> nadph[c] + ac[c] + 2 h[c]'
+	FOG annotation: 'FOG00350  |  FOG00362  |  FOG00361  |  FOG00360'
+
+
+Example of orthologous group annotation in AYbRAH:
+	FOG			pta	sce	dbx	dha	spo pic
+	FOG00350	0	0	0	0	1	0
+	FOG00362	0	1	0	0	0	0
+	FOG00361	1	0	1	0	0	0
+	FOG00360	0	0	0	1	0	0
+
+
+To determine whether a reaction is included, a reaction must have at least one
+function protein/complex in the GPR (gene-protein-reaction) association.
+| denotes the or operator, & denotes and operator used for complexes.
+Sometimes proteins have different complex variants, in which case a double or operator is used ||:
+	A & B || A & C
+Complex variants with non-essential subunits are denoted with ?. 
+In the example below D is non-essential,
+which means that a GPR is included in a network if A and B are present.
+	A & B & D?
+
+Note that some reactions in FYRMENT are automatically included in all metabolic networks like:
+BIOMASS, Exchange reactions, 
+
+
+"""
 
 
 
 def process_fog_annotation(oid,fog_annotation):
 	"""
-	Could and should clean this up
-	Purpose is to take in a fog_annotation in FYRMENT and oid
-	Check if all essential subunits are present
+	Could and should clean this up.
+	Purpose is to take in a fog_annotation in FYRMENT
+	(such as 'FOG01654  |  FOG01655') and oid (such as kla, pic)
+	to determine which  genes/proteins to include for the GPR.
+	Checks if all essential subunits are present for protein complexes.
+	Should not have nested functions in future versions
 	"""
 	def process_complex_variants(oid,fog_annotation):
+		"""
+		Code to process complex variants, which only looks at
+		essential subunits. Examples include Complex I
+		"""
 		complex_check={}
 		complex_variants=fog_annotation.split('||')
 		for i,complex_variant in enumerate(complex_variants):
@@ -46,10 +89,10 @@ def process_fog_annotation(oid,fog_annotation):
 				fogs_processed=[fog[:8] for fog in complex_check[i] if len(aybrah[oid][fog[:8]])>0]
 				if len(fogs_processed)>0:
 					complex_include[i]=fogs_processed
-				print oid,'include complex '+str(i)
+				print(oid,'include complex '+str(i))
 			else:
 				# return empty
-				print 'oid','not all subunits for complex '+str(i)
+				print('oid','not all subunits for complex '+str(i))
 				#complex_include=None
 		return complex_include
 	# fog_annotation requires parsing
@@ -71,6 +114,9 @@ def process_fog_annotation(oid,fog_annotation):
 
 
 def parse_stoich_met(stoich_metabolite):
+	"""
+	Parse text formula to get stoich and metabolite
+	"""
 	# remove white space at the end of metabolite
 	while stoich_metabolite[-1] in ' ':
 		stoich_metabolite=stoich_metabolite[:-1]
@@ -82,43 +128,62 @@ def parse_stoich_met(stoich_metabolite):
 	# necessary to remove features not compatible with SBML
 	return stoich,met_id
 
+
+
+
 def parse_formula(rxn_formula):
+	"""
+	Takes in rxn_formula to creates a dictionary of reactants and products
+	with stoich/metabolite IDs.
+	Example:
+	Input:
+	'6.0565 mannan[c] -> mannan_1g[c] + 5.0565 h2o[c]'
+	Output:
+	{'reactants': [('6.0565', 'mannan[c]')], 'products': [('1.0', 'mannan_1g[c]'),\
+	 ('5.0565', 'h2o[c]')]}
+
+	"""
 	parsed_rxn={}
-	print rxn_formula
+	parsed_rxn['reactants']=[]
+	print(rxn_formula)
 	if '->' in rxn_formula:
-		if len(filter(None,rxn_formula.split('->')))==1:
+		# case of exchange reactions
+		if len(list(filter(None,rxn_formula.split('->'))))==1:
 			delim=' ->'
+		# non-exchange reactions
 		else:
 			delim=' -> '
 	elif '<=>' in rxn_formula:
-		if len(filter(None,rxn_formula.split('<=>')))==1:
+		if len(list(filter(None,rxn_formula.split('<=>'))))==1:
 			delim=' <=>'
 		else:
 			delim=' <=> '
 	print('parse products')
 	reactants=rxn_formula.split(delim)[0].split(' + ')
-	parsed_rxn['reactants']=[]
 	for reactant in reactants:
-		print '\t'+reactant
+		print('\t'+reactant)
 		stoich,met_id=parse_stoich_met(reactant)
 		parsed_rxn['reactants'].append((str(stoich),str(met_id)))
+	# checks if products in the fomrula, combine with above conditions?
 	if len(rxn_formula.split(delim))>1:
 		print('parse products')
 		parsed_rxn['products']=[]
 		products=rxn_formula.split(delim)[1].split(' + ')
 		for product in list(filter(None,products)):
-			print '\t'+product
+			print('\t'+product)
 			stoich,met_id=parse_stoich_met(product)
 			parsed_rxn['products'].append((str(stoich),str(met_id)))
 	return parsed_rxn
 
 
 def get_rxn_inclusion():
+	"""
+	"""
 	inclusion_automatic=['BIOMASS','DEMAND','DIFFUSION','EQUILIBRIUM','ESSENTIAL','EXCHANGE','SPONTANEOUS','ORPHAN']
 	oids=aybrah.columns[2:].tolist()
 	oid_rxns={oid:{} for oid in oids}
 	for rxnid,row in rxns.iterrows():
-		print rxnid
+		print(rxnid)
 		#
 		inclusion_model=rxns['model'][rxnid]
 		inclusion_organism=rxns['organism'][rxnid].split('|')
@@ -235,6 +300,7 @@ def create_compartments():
 
 
 def get_metabolites_in_reactions():
+	# gets all metabolites in the pan-model reaction network
 	output_reaction_metabolites=[]
 	for rxnid,row in rxns.iterrows():
 		rxn_formula=rxns['Formula'][rxnid]
@@ -255,6 +321,7 @@ def get_metabolites_in_reactions():
 
 
 def create_species(name):
+	# creates metabolic species with meta data (CHEBI, METACYC, etc)
 	metabolites_in_reactions=get_metabolites_in_reactions()
 	# Appears to be metabolites in pan-Fungi, but not captured in lower level GENRE
 	if name=='Fungi':
@@ -266,7 +333,7 @@ def create_species(name):
 		mets_to_add=[(met,met+'_'+c,c) for met,row in mets.iterrows()  for c in df_c.index.tolist() if met+'['+c+']' in metabolites_in_reactions]
 	for met,met_compartment,compartment in mets_to_add:
 		#break
-		print met
+		print(met)
 		name=str(mets['Metabolite description'][met])
 		formula=str(mets['Metabolite charged formula'][met])
 		charge=str(mets['Metabolite charge'][met])
@@ -339,7 +406,7 @@ def create_parameters():
 
 def create_reactions():
 	for rxnid, row in rxns.iterrows():
-		print rxnid
+		print(rxnid)
 		# need to place in notes why reaction included
 		if rxnid not in inclusion_rxns:
 			continue
@@ -439,7 +506,7 @@ def create_reactions():
 			reactant.setConstant(True)
 		# products
 		for stoich,met in parsed_rxn['products']:
-			print 'product'
+			print('product')
 			product = r1.createProduct()
 			product.setSpecies('M_'+met[:-3]+'_'+met[-2:-1])
 			product.setStoichiometry(float(stoich))
@@ -463,7 +530,7 @@ def create_reactions():
 			# test is not complex annotaiton
 			isozyme_fogs=[complex_variant for complex_variant in complex_variants if ';' not in complex_variant]
 			# isozyme annotation, ie not a complex annotation
-			if len(isozyme_fogs)==len(complex_variants) and len(isozyme_fogs)>1:
+			if len(isozyme_fogs)==len(list(complex_variants)) and len(isozyme_fogs)>1:
 				rplugin = r1.getPlugin("fbc")
 				gpr=rplugin.createGeneProductAssociation()
 				g_current_level1=gpr.createOr()
@@ -478,8 +545,8 @@ def create_reactions():
 						for gene in genes:
 							gene_tag=g_current_level1.createGeneProductRef()
 							gene_tag.setGeneProduct('G_'+gene)
-			elif len(complex_variants)>0:
-				complex_variants=zip(*sorted([(complex_variant.count(';'),complex_variant)for complex_variant in complex_variants]))[1]
+			elif len(list(complex_variants))>0:
+				_,complex_variants=zip(*sorted([(complex_variant.count(';'),complex_variant)for complex_variant in complex_variants]))
 				#gpr_instance_list=sorted(gene_associations.keys())
 				rplugin = r1.getPlugin("fbc")
 				gpr=rplugin.createGeneProductAssociation()
@@ -556,6 +623,8 @@ def check_status(status,tag,entry):
 		fname=taxonomy['name'][index]+'.txt'
 		open(fname,'a').write('\t'.join([str(status),tag,entry])+'\n')
 
+
+
 def create_geneproducts(uniprot_proteome):
 	print('parse gene reactions')
 	# this is adding all of them
@@ -572,11 +641,14 @@ def create_geneproducts(uniprot_proteome):
 	for fog in fogs:
 		#print fog
 		fog=str(fog[:8])
-		protein_id=str(aybrah_excel['Protein ID'][fog])
-		protein_name=str(aybrah_excel['Protein description'][fog])
+		if fog in fog_descriptions.index:
+			protein_id=str(fog_descriptions['Protein ID'][fog])
+			protein_name=str(fog_descriptions['Protein description'][fog])
+		else:
+			protein_id,protein_name='',''
 		#print '\t'+protein_name
 		if level=='Strain':
-			seqids=filter(None,[seqid for seqid in aybrah[inclusion_oids[0]][fog].split(';')])
+			seqids=list(filter(None,[seqid for seqid in aybrah[inclusion_oids[0]][fog].split(';')]))
 			for seqid in seqids:
 				print(fog,seqid)
 				locus_tag=seqid.split('|')[1]
@@ -762,13 +834,13 @@ https://www.ebi.ac.uk/miriam/main/collections/MIR:00000014
 
 """
 
-root_aybrah='../aybrah/'
+root_aybrah='./aybrah'
 
 # local_path
 #root_aybrah='https://github.com/kcorreia/aybrah/raw/master/'
 
 
-path_aybrah_xlsx=root_aybrah+'aybrah.xlsx'
+path_aybrah_xlsx=root_aybrah+'/aybrah.xlsx'
 
 
 taxonomy=pd.read_excel(path_aybrah_xlsx,sheet_name='taxon_nodes').fillna('')
@@ -776,16 +848,11 @@ taxonomy=pd.read_excel(path_aybrah_xlsx,sheet_name='taxon_nodes').fillna('')
 drop_these=[index for oid in ['cpr','ani'] for index in taxonomy[taxonomy['oids']==oid].index.tolist()]
 taxonomy=taxonomy.drop(drop_these)
 
-taxon_order=zip(*sorted([(taxonomy.level.tolist().index(taxon),taxon) for taxon in set(taxonomy.level.tolist())]))[1]
+_,taxon_order=zip(*sorted([(taxonomy.level.tolist().index(taxon),taxon) for taxon in set(taxonomy.level.tolist())]))
 
 
-
-
-version_aybrah=urllib.urlopen(root_aybrah+'version.txt').read()
-aybrah=pd.read_csv(root_aybrah+'aybrah.tsv',sep='\t').fillna('').set_index('FOG')
-#aybrah=pd.read_csv('/Volumes/5TB/Organized/github/aybrah_old/aybrah_'+version_aybrah+'.tsv',sep='\t').fillna('').set_index('FOG')
-
-aybrah_excel=pd.read_excel(path_aybrah_xlsx,sep='\t').fillna('').set_index('FOG')
+version_aybrah=open(root_aybrah+'/version.txt','r').read()
+aybrah=pd.read_csv(root_aybrah+'/aybrah.tsv',sep='\t').fillna('').set_index('FOG')
 
 
 organisms=pd.read_excel(path_aybrah_xlsx,sheet_name='curated_taxonomy_fungi').fillna('')
@@ -804,18 +871,29 @@ no blank mets
 
 
 
-root_fyrment=''
+root_fyrment='./fyrment'
 #url_fyrment_xlsx='https://github.com/LMSE/fyrment/raw/master/fyrment.xlsx'
 
-version_fyrment=open(root_fyrment+'version.txt','r').read()
+version_fyrment=open(root_fyrment+'/version.txt','r').read()
 
-path_fyrment_xlsx=root_fyrment+'fyrment.xlsx'
+path_fyrment_xlsx=root_fyrment+'/fyrment.xlsx'
 #encoding='utf-8'
 
-rxns=pd.read_excel(path_fyrment_xlsx,sheet_name='reactions',encoding='ascii',skiprows=[0]).fillna('').set_index('Rxn name')
-mets=pd.read_excel(path_fyrment_xlsx,sheet_name='metabolites',encoding='ascii').fillna('').set_index('Metabolite name')
-df_c=pd.read_excel(path_fyrment_xlsx,sheet_name='compartments',encoding='ascii').set_index('compartment_id').fillna('')
+# used to add descriptions for gene products in SBML
+# fbc:label and fbc:name
+# <fbc:geneProduct sboTerm="SBO:0000243" fbc:id="G_Q6CWR9" fbc:name="RPL1 Large ribosome protein subunit" fbc:label="RPL1"/>
+fog_descriptions=pd.read_csv(root_aybrah+'/descriptions_fog.txt',sep='\t').set_index('FOG').fillna('')
 
+
+# the FYRMENT in Excel format has 3 sheets:
+# rxns that include FOG annotations
+rxns=pd.read_excel(path_fyrment_xlsx,sheet_name='reactions',skiprows=[0]).fillna('').set_index('Rxn name')
+# metabolites that include species information like formula, charge, meta data
+mets=pd.read_excel(path_fyrment_xlsx,sheet_name='metabolites').fillna('').set_index('Metabolite name')
+# compartment information
+df_c=pd.read_excel(path_fyrment_xlsx,sheet_name='compartments').set_index('compartment_id').fillna('')
+
+# organism IDs in AYbRAH
 oids=aybrah.columns[2:].tolist()
 
 
@@ -830,15 +908,20 @@ parameters={
 }
 
 
+
+# creates a dictionary of which rxnids to include for each oid in the network
 oid_rxns=get_rxn_inclusion()
 
 
 
 
-
-
-#for index,row in taxonomy[taxonomy['level']=='Strain'].iterrows():
+# create models for all taxonomies (from kingdom to strain)
 for index,row in taxonomy.iterrows():
+# create models for all strains
+#for index,row in taxonomy[taxonomy['level']=='Strain'].iterrows():
+# index 113 for K. lactis metabolic model
+#for index in [113]:
+	#break
 	level=taxonomy['level'][index]
 	level_order=taxon_order.index(level)
 	name=taxonomy['name'][index]
@@ -938,6 +1021,8 @@ for index,row in taxonomy.iterrows():
 	###################################
 	if not os.path.exists(path_xml_dir):
 		os.makedirs(path_xml_dir)
+	#raise Exception ('review before saving')
+	#path_xml_file='test_kla.xml'
 	writeSBML(document,str(path_xml_file))
 	###################################
 
@@ -963,7 +1048,7 @@ for index,row in taxonomy.iterrows():
 	if oid in ['cpr','ani']:
 		continue
 	elif level=='Strain':
-		print name
+		print(name)
 	else:
 		continue
 	#
